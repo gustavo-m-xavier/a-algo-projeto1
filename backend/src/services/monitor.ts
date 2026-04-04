@@ -28,8 +28,7 @@ export async function monitorElement(
 
         await sendToSite(browser, oldValue, newValue);
 
-        oldValue = newValue;
-        break;
+        return newValue;
       }
     } catch (err) {
       console.log("Elemento não encontrado. Verifique o seletor:", selector);

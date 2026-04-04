@@ -35,7 +35,20 @@ app.post("/monitor", async (req, res) => {
 
   console.log("Elemento Selecionado...", selected);
 
-  await monitorElement(browser, page, selected.selector, selected.text);
+  const newValue = await monitorElement(
+    browser,
+    page,
+    selected.selector,
+    selected.text,
+  );
+
+  res.json({
+    message: "Mudança capturada com sucesso!",
+    data: {
+      oldValue: selected.text,
+      newValue: newValue,
+    },
+  });
 });
 
 app.listen(3000, () => {
