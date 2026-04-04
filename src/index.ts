@@ -1,8 +1,24 @@
 import puppeteer from "puppeteer";
+import express from "express";
 import { selectElement } from "./services/selectElement";
 import { monitorElement } from "./services/monitor";
+import { isValidUrl } from "./utils/urlValidator";
 
-async function main() {
+const app = express();
+
+app.use(express.json());
+
+app.post("/monitor", async (req, res) => {
+  const { url } = req.body;
+
+  if (!url) {
+    return res.status(400).json({ error: "A url é obrigatória" });
+  }
+
+  if (!isValidUrl(url)) {
+    return res.status(400).json({ error: "A url é inválida" });
+  }
+
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
@@ -10,7 +26,7 @@ async function main() {
 
   const page = await browser.newPage();
 
-  await page.goto("https://br.investing.com/crypto/bitcoin");
+  await page.goto(url);
 
   console.log("Página carregada!");
   console.log("Esperando o usuário clicar em um elemento...");
@@ -20,6 +36,8 @@ async function main() {
   console.log("Elemento Selecionado...", selected);
 
   await monitorElement(browser, page, selected.selector, selected.text);
-}
+});
 
-main();
+app.listen(3000, () => {
+  console.log("Servidor rodando em: http://localhost:3000");
+});
