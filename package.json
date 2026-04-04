@@ -1,0 +1,29 @@
+{
+  "name": "a-algo-projeto1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavo-m-xavier/a-algo-projeto1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gustavo-m-xavier/a-algo-projeto1/issues"
+  },
+  "homepage": "https://github.com/gustavo-m-xavier/a-algo-projeto1#readme",
+  "dependencies": {
+    "puppeteer": "^24.40.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}
