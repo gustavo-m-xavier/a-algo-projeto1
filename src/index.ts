@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { selectElement } from "./selectElement";
 
 async function main() {
   const browser = await puppeteer.launch({
@@ -8,9 +9,14 @@ async function main() {
 
   const page = await browser.newPage();
 
-  await page.goto("https://portal.grupoazconex.com.br/");
+  await page.goto("https://www.b3.com.br/pt_br/para-voce");
 
-  console.log("Page opened!");
+  console.log("Página carregada!");
+  console.log("Esperando o usuário clicar em um elemento...");
+
+  const selected = await selectElement(page);
+
+  console.log("Elemento Selecionado...", selected);
 }
 
 main();
