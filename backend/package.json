@@ -19,10 +19,12 @@
   },
   "homepage": "https://github.com/gustavo-m-xavier/a-algo-projeto1#readme",
   "dependencies": {
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "puppeteer": "^24.40.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
     "ts-node": "^10.9.2",

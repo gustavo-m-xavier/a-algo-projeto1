@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import express from "express";
+import cors from "cors";
 import { selectElement } from "./services/selectElement";
 import { monitorElement } from "./services/monitor";
 import { isValidUrl } from "./utils/urlValidator";
@@ -7,6 +8,7 @@ import { isValidUrl } from "./utils/urlValidator";
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.post("/monitor", async (req, res) => {
   const { url } = req.body;
@@ -49,6 +51,8 @@ app.post("/monitor", async (req, res) => {
       newValue: newValue,
     },
   });
+
+  browser.close();
 });
 
 app.listen(3000, () => {

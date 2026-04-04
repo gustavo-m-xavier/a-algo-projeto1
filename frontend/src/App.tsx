@@ -1,9 +1,13 @@
 import { useState } from "react";
+import type { MonitorationResults } from "./types/MonitorationResults";
 
 function App() {
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [monitorationResults, setMonitorationResults] = useState<
+    MonitorationResults[]
+  >([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,7 +40,8 @@ function App() {
         throw new Error(data.error || "Erro");
       }
 
-      setMessage("Monitoramento iniciado!");
+      setMessage(data.message);
+      setMonitorationResults((prev) => [...prev, data.data]);
       setUrl("");
     } catch (err: any) {
       setMessage(err.message);
@@ -68,8 +73,31 @@ function App() {
           </button>
         </form>
 
-        {message && <p style={styles.message}>{message}</p>}
+        {setTimeout(() => setMessage(""), 5000) && message && (
+          <p style={styles.message}>{message}</p>
+        )}
       </section>
+
+      {monitorationResults.length > 0 && (
+        <section>
+          <h2>Resultados das tentativas de Monitoramento</h2>
+          {monitorationResults.map((result, index) => {
+            return (
+              <ul style={styles.list}>
+                <li style={styles.resultCard} key={index}>
+                  <h3>Resultado da tentativa {index + 1}</h3>
+                  <p>
+                    <strong>Valor Antigo:</strong> {result.oldValue}
+                  </p>
+                  <p>
+                    <strong>Valor Novo:</strong> {result.newValue}
+                  </p>
+                </li>
+              </ul>
+            );
+          })}
+        </section>
+      )}
     </main>
   );
 }
@@ -80,6 +108,7 @@ const styles = {
     height: "100vh",
     backgroundColor: "#ffffff",
     display: "flex",
+    flexDirection: "column" as const,
     justifyContent: "center",
     alignItems: "center",
     fontFamily: "Arial, sans-serif",
@@ -94,6 +123,16 @@ const styles = {
     display: "flex",
     flexDirection: "column" as const,
     gap: "20px",
+  },
+
+  resultCard: {
+    backgroundColor: "#f9f9f9",
+    padding: "30px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    width: "300px",
+    display: "flex",
+    flexDirection: "column" as const,
   },
 
   title: {
@@ -131,6 +170,13 @@ const styles = {
     color: "#fff",
     fontWeight: "bold" as const,
     transition: "0.2s",
+  },
+
+  list: {
+    listStyle: "none",
+    padding: 0,
+    display: "flex",
+    gap: "15px",
   },
 
   message: {

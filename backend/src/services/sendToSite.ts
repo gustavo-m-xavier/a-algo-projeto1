@@ -21,6 +21,4 @@ export async function sendToSite(
   if (button) {
     await button.click();
   }
-
-  await page.evaluate(() => alert("Dados enviados com sucesso!"));
 }
