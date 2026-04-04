@@ -52,7 +52,7 @@ function App() {
 
   return (
     <main style={styles.page}>
-      <section style={styles.card}>
+      <section style={styles.card} key={"monitoration-form"}>
         <h1 style={styles.title}>Monitorar Página</h1>
 
         <form onSubmit={handleSubmit} style={styles.form}>
@@ -79,11 +79,11 @@ function App() {
       </section>
 
       {monitorationResults.length > 0 && (
-        <section>
+        <section key={"monitorationResults"} style={{ marginTop: "30px" }}>
           <h2>Resultados das tentativas de Monitoramento</h2>
-          {monitorationResults.map((result, index) => {
-            return (
-              <ul style={styles.list}>
+          <ul style={styles.list}>
+            {monitorationResults.map((result, index) => {
+              return (
                 <li style={styles.resultCard} key={index}>
                   <h3>Resultado da tentativa {index + 1}</h3>
                   <p>
@@ -93,9 +93,9 @@ function App() {
                     <strong>Valor Novo:</strong> {result.newValue}
                   </p>
                 </li>
-              </ul>
-            );
-          })}
+              );
+            })}
+          </ul>
         </section>
       )}
     </main>
@@ -176,6 +176,7 @@ const styles = {
     listStyle: "none",
     padding: 0,
     display: "flex",
+    flexDirection: "row" as const,
     gap: "15px",
   },
 
