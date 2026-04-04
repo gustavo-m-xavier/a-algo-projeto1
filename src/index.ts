@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
-import { selectElement } from "./selectElement";
-import { monitorElement } from "./monitor";
+import { selectElement } from "./services/selectElement";
+import { monitorElement } from "./services/monitor";
 
 async function main() {
   const browser = await puppeteer.launch({
@@ -10,7 +10,7 @@ async function main() {
 
   const page = await browser.newPage();
 
-  await page.goto("https://www.b3.com.br/pt_br/para-voce");
+  await page.goto("https://br.investing.com/crypto/bitcoin");
 
   console.log("Página carregada!");
   console.log("Esperando o usuário clicar em um elemento...");
@@ -19,7 +19,7 @@ async function main() {
 
   console.log("Elemento Selecionado...", selected);
 
-  await monitorElement(page, selected.selector, selected.text);
+  await monitorElement(browser, page, selected.selector, selected.text);
 }
 
 main();

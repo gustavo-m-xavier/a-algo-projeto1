@@ -1,5 +1,5 @@
 import { Page } from "puppeteer";
-import { SelectedElement } from "./types/SelectedElement";
+import { SelectedElement } from "../types/SelectedElement";
 
 export async function selectElement(page: Page): Promise<SelectedElement> {
   return new Promise(async (resolve) => {

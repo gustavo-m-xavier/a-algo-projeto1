@@ -1,6 +1,8 @@
-import { Page } from "puppeteer";
+import { Page, Browser } from "puppeteer";
+import { sendToSite } from "./sendToSite";
 
 export async function monitorElement(
+  browser: Browser,
   page: Page,
   selector: string,
   initialValue: string,
@@ -10,7 +12,7 @@ export async function monitorElement(
   console.log("Iniciando monitoramento do elemento...");
   console.log("Valor Inicial", oldValue);
 
-  setInterval(async () => {
+  while (true) {
     try {
       const newValue = await page.$eval(
         selector,
@@ -24,10 +26,15 @@ export async function monitorElement(
         console.log("Antigo:", oldValue);
         console.log("Novo:", newValue);
 
+        await sendToSite(browser, oldValue, newValue);
+
         oldValue = newValue;
+        break;
       }
     } catch (err) {
       console.log("Elemento não encontrado. Verifique o seletor:", selector);
     }
-  }, 3000);
+
+    await new Promise((r) => setTimeout(r, 3000));
+  }
 }
