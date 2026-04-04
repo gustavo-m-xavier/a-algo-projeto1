@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import { selectElement } from "./selectElement";
+import { monitorElement } from "./monitor";
 
 async function main() {
   const browser = await puppeteer.launch({
@@ -17,6 +18,8 @@ async function main() {
   const selected = await selectElement(page);
 
   console.log("Elemento Selecionado...", selected);
+
+  await monitorElement(page, selected.selector, selected.text);
 }
 
 main();

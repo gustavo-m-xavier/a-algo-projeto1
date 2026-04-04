@@ -8,16 +8,32 @@ export async function selectElement(page: Page): Promise<SelectedElement> {
     });
 
     await page.evaluate(() => {
-      function getSelector(el: HTMLElement): string {
-        if (el.id) return `#${el.id}`;
+      function getFullSelector(el: HTMLElement): string {
+        let path = "";
 
-        return el.tagName.toLowerCase();
+        while (el.parentElement) {
+          let tag = el.tagName.toLowerCase();
+
+          const siblings = Array.from(el.parentElement.children).filter(
+            (child) => child.tagName === el.tagName,
+          );
+
+          if (siblings.length > 1) {
+            const index = siblings.indexOf(el) + 1;
+            tag += `:nth-of-type(${index})`;
+          }
+
+          path = tag + (path ? " > " + path : "");
+          el = el.parentElement;
+        }
+
+        return path;
       }
 
       alert("Clique no elemento que deseja monitorar!");
 
       document.addEventListener(
-        "click",
+        "mousedown",
         (event) => {
           event.preventDefault();
           event.stopPropagation();
@@ -25,13 +41,13 @@ export async function selectElement(page: Page): Promise<SelectedElement> {
           const el = event.target as HTMLElement;
 
           const data = {
-            selector: getSelector(el),
+            selector: getFullSelector(el),
             text: el.innerText || "",
           };
 
           (window as any).elementSelected(data);
         },
-        { once: true },
+        { once: true, capture: true },
       );
     });
   });
