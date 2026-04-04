@@ -30,24 +30,51 @@ export async function selectElement(page: Page): Promise<SelectedElement> {
         return path;
       }
 
-      alert("Clique no elemento que deseja monitorar!");
+      const createdButton = document.createElement("button");
 
-      document.addEventListener(
-        "mousedown",
+      createdButton.innerText = "Monitorar o click";
+      createdButton.style.position = "fixed";
+      createdButton.style.top = "10px";
+      createdButton.style.right = "10px";
+      createdButton.style.zIndex = "9999";
+      createdButton.style.backgroundColor = "rgba(0, 63, 117, 0.9)";
+      createdButton.style.color = "white";
+      createdButton.style.padding = "1rem";
+      createdButton.style.boxShadow = "rgba(0,0,0,0.24) 0px 3px 8px";
+
+      document.body.appendChild(createdButton);
+
+      createdButton.addEventListener(
+        "click",
         (event) => {
           event.preventDefault();
           event.stopPropagation();
 
-          const el = event.target as HTMLElement;
+          createdButton.innerText = "Monitorando click...";
 
-          const data = {
-            selector: getFullSelector(el),
-            text: el.innerText || "",
-          };
+          document.addEventListener(
+            "mousedown",
+            (event) => {
+              event.preventDefault();
+              event.stopPropagation();
 
-          (window as any).elementSelected(data);
+              const el = event.target as HTMLElement;
+
+              if (el === createdButton) {
+                return;
+              }
+
+              const data = {
+                selector: getFullSelector(el),
+                text: el.innerText || "",
+              };
+
+              (window as any).elementSelected(data);
+            },
+            { once: true, capture: true },
+          );
         },
-        { once: true, capture: true },
+        { capture: true },
       );
     });
   });
