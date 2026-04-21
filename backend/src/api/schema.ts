@@ -1,13 +1,13 @@
 import z from "zod";
 
-export const monitorRequestBody = z.object({
+export const monitorRequest = z.object({
 	url: z.url().nonempty("A url é obrigatória"),
-})
+}).meta({ id: 'monitorRequest' })
 
-export const monitorResponseBody = z.object({
+export const monitorResponse = z.object({
 	message: z.string(),
 	data: z.object({
 		oldValue: z.string(),
 		newValue: z.string(),
 	}),
-})
+}).meta({ id: 'monitorResponse' })
