@@ -21,7 +21,10 @@ const runAppAsync = async () => {
 			res.json(openApi);
 		})
 
-		app.use(schemaParsingMiddleware(openApi, operations))
+		app.use(schemaParsingMiddleware(openApi))
+
+		app.post('/monitor', operations.monitor)
+
 		app.use(runtimeErrorMiddleware)
 
 		app.listen(

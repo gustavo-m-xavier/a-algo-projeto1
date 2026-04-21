@@ -10,38 +10,11 @@ import { OpenAPIObject, OperationObject, PathItemObject, PathsObject } from "ope
  * @param _options 
  * @returns Um middleware configurado para validar as requisições de acordo com a especificação OpenAPI e direcionar as requisições para os manipuladores de rota apropriados.
  */
-export function schemaParsingMiddleware(
-	apiSpec: any,
-	operations: Record<string, RequestHandler>,
-	_securityHandlers: any = {},
-	_options: any = {}
-) {
+export function schemaParsingMiddleware(apiSpec: any) {
 	return middleware({
 		apiSpec,
 		validateRequests: { removeAdditional: 'all' },
-		operationHandlers: {
-			basePath: '/operations',
-			resolver: function (_, route, apiDoc) {
-				const doc = apiDoc as OpenAPIObject | undefined;
-
-				if (!doc || !doc.paths) return undefined;
-
-				const paths = doc.paths as PathsObject;
-				const pathKey = route.openApiRoute.substring(route.basePath.length);
-
-				const pathItem = paths[pathKey] as PathItemObject | undefined;
-
-				if (!pathItem) return undefined;
-
-				const methodKey = route.method.toLowerCase() as keyof PathItemObject;
-
-				const schema = pathItem[methodKey] as OperationObject | undefined;
-
-				if (!schema || !schema.operationId) return undefined;
-
-				return operations[schema.operationId as string];
-			}
-		}
+		validateResponses: false
 	});
 }
 
