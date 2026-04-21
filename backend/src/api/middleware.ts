@@ -38,6 +38,8 @@ export function schemaParsingMiddleware(
 }
 
 export function errorMiddleware(err: any, _req: Request, res: Response, _next: NextFunction) {
+	console.error(err)
+
 	res.status(err.status || 500).json({
 		message: err.status ? err.message : 'internal server error',
 		errors: err.status ? err.errors : undefined
