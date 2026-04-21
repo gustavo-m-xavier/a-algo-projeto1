@@ -1,5 +1,5 @@
 import { Page, Browser } from "puppeteer";
-import { sendToSiteAsync } from "./sendToSite";
+import { submitTrackingAsync } from "./tracking-submitter";
 
 /**
  * Realiza o monitoramento de um elemento específico em uma página, verificando periodicamente seu valor e enviando uma notificação quando houver uma mudança.
@@ -34,7 +34,7 @@ export async function monitorElementAsync(
 				console.log("Antigo:", oldValue);
 				console.log("Novo:", newValue);
 
-				await sendToSiteAsync(browser, oldValue, newValue);
+				await submitTrackingAsync(browser, oldValue, newValue);
 
 				return newValue;
 			}

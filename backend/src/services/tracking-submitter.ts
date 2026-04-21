@@ -7,7 +7,7 @@ import { Browser } from "puppeteer";
  * @param newValue O valor atualizado que foi monitorado e que será enviado para o site.
  * @returns Uma Promise que resolve quando os dados forem enviados com sucesso para o site.
  */
-export async function sendToSiteAsync(
+export async function submitTrackingAsync(
 	browser: Browser,
 	oldValue: string,
 	newValue: string,
