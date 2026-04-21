@@ -10,6 +10,10 @@ const runApp = async () => {
 
 		app.use(express.json())
 		app.use(cors())
+
+		console.log("Importing API Specification:")
+		console.dir(openApi, { depth: null })
+
 		app.use(schemaParsingMiddleware(openApi, operations))
 		app.use(errorMiddleware)
 
