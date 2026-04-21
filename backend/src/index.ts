@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 import express from "express";
 import cors from "cors";
 import { selectElementAsync } from "./services/selectElement";
-import { monitorElement } from "./services/monitor";
+import { monitorElementAsync } from "./services/monitor";
 import { isValidUrl } from "./utils/urlValidator";
 
 const app = express();
@@ -37,7 +37,7 @@ app.post("/monitor", async (req, res) => {
 
 	console.log("Elemento Selecionado...", selected);
 
-	const newValue = await monitorElement(
+	const newValue = await monitorElementAsync(
 		browser,
 		page,
 		selected.selector,

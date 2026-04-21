@@ -1,7 +1,15 @@
 import { Page, Browser } from "puppeteer";
 import { sendToSiteAsync } from "./sendToSite";
 
-export async function monitorElement(
+/**
+ * Realiza o monitoramento de um elemento específico em uma página, verificando periodicamente seu valor e enviando uma notificação quando houver uma mudança.
+ * @param browser A instância do navegador Puppeteer.
+ * @param page A instância da página onde o elemento está localizado.
+ * @param selector O seletor CSS do elemento a ser monitorado.
+ * @param initialValue O valor inicial capturado na primeira verificação do elemento, usado como referência para detectar mudanças subsequentes.
+ * @returns Uma Promise que resolve com o novo valor do elemento quando uma mudança for detectada.
+ */
+export async function monitorElementAsync(
 	browser: Browser,
 	page: Page,
 	selector: string,
