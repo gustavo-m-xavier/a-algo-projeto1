@@ -5,10 +5,10 @@ export const monitorPaths: Paths = {
 		post: {
 			operationId: 'monitorPage',
 			summary: 'Monitora uma página web para mudanças em um elemento selecionado',
-			requestBody: jsonBody(schemaRef('monitorSchema')),
+			requestBody: jsonBody(schemaRef('monitorRequestBody')),
 			responses: {
 				...errorResponseRefs(),
-				'200': jsonResponse(schemaRef('monitorResponseSchema')),
+				'200': jsonResponse(schemaRef('monitorResponseBody')),
 			}
 		}
 	}
