@@ -41,13 +41,13 @@ app.post("/monitor", async (req, res) => {
 		browser,
 		page,
 		selected.selector,
-		selected.text,
+		selected.textContent,
 	);
 
 	res.json({
 		message: "Mudança capturada com sucesso!",
 		data: {
-			oldValue: selected.text,
+			oldValue: selected.textContent,
 			newValue: newValue,
 		},
 	});
