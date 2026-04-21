@@ -4,7 +4,10 @@ import { errorMiddleware, schemaParsingMiddleware } from "./api/middleware";
 import { openApi } from "./api/openapi";
 import { operations } from "./api/operations";
 
-const runApp = async () => {
+/**
+ * Configura o ciclo de vida básico da aplicação, desde a exposição de endpoints até a configuração de middlewares e tratamento de erros.
+ */
+const runAppAsync = async () => {
 	try {
 		const app = express()
 
@@ -24,4 +27,4 @@ const runApp = async () => {
 	}
 }
 
-runApp()
+runAppAsync()
