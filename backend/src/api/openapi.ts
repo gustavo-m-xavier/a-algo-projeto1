@@ -1,6 +1,6 @@
 import { errorResponses, errorSchema, jsonSchemas, OpenApi, searchParameters } from "@apexjs-org/openapi";
 import { monitorPaths } from "./paths";
-import * as schemas from './schemas/monitor.schema'
+import * as schemas from './schema'
 
 export const openApi: OpenApi = {
 	openapi: '3.1.1',
