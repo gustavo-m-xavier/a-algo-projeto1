@@ -1,60 +1,23 @@
-import puppeteer from "puppeteer";
 import express from "express";
 import cors from "cors";
-import { selectElementAsync } from "./services/selectElement";
-import { monitorElementAsync } from "./services/monitor";
-import { isValidUrl } from "./utils/urlValidator";
+import { errorMiddleware, schemaParsingMiddleware } from "./api/middleware";
+import { openApi } from "./api/openapi";
+import { operations } from "./api/operations";
 
-const app = express();
+const runApp = async () => {
+	try {
+		const app = express()
 
-app.use(express.json());
-app.use(cors());
+		app.use(express.json())
+		app.use(cors())
+		app.use(schemaParsingMiddleware(openApi, operations))
+		app.use(errorMiddleware)
 
-app.post("/monitor", async (req, res) => {
-	const { url } = req.body;
-
-	if (!url) {
-		return res.status(400).json({ error: "A url é obrigatória" });
+		app.listen(3000, () => console.log("Server running on port 3000\nAccess API docs at http://localhost:3000/api-docs"));
 	}
-
-	if (!isValidUrl(url)) {
-		return res.status(400).json({ error: "A url é inválida" });
+	catch (err) {
+		console.error(err);
 	}
+}
 
-	const browser = await puppeteer.launch({
-		headless: false,
-		defaultViewport: null,
-	});
-
-	const page = await browser.newPage();
-
-	await page.goto(url);
-
-	console.log("Página carregada!");
-	console.log("Esperando o usuário clicar em um elemento...");
-
-	const selected = await selectElementAsync(page);
-
-	console.log("Elemento Selecionado...", selected);
-
-	const newValue = await monitorElementAsync(
-		browser,
-		page,
-		selected.selector,
-		selected.textContent,
-	);
-
-	res.json({
-		message: "Mudança capturada com sucesso!",
-		data: {
-			oldValue: selected.textContent,
-			newValue: newValue,
-		},
-	});
-
-	browser.close();
-});
-
-app.listen(3000, () => {
-	console.log("Servidor rodando em: http://localhost:3000");
-});
+runApp()
