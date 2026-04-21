@@ -17,10 +17,17 @@ const runAppAsync = async () => {
 		console.log("Importing API Specification:")
 		console.dir(openApi, { depth: null })
 
+		app.get('/docs', (_req, res) => {
+			res.json(openApi);
+		})
+
 		app.use(schemaParsingMiddleware(openApi, operations))
 		app.use(errorMiddleware)
 
-		app.listen(3000, () => console.log("Server running on port 3000\nAccess API docs at http://localhost:3000/api-docs"));
+		app.listen(
+			3000,
+			() => console.log("Server running on port 3000\nAccess API docs at http://localhost:3000/docs")
+		);
 	}
 	catch (err) {
 		console.error(err);
