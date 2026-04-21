@@ -1,60 +1,40 @@
-import puppeteer from "puppeteer";
 import express from "express";
 import cors from "cors";
-import { selectElement } from "./services/selectElement";
-import { monitorElement } from "./services/monitor";
-import { isValidUrl } from "./utils/urlValidator";
+import { runtimeErrorMiddleware, schemaParsingMiddleware } from "./api/middleware";
+import { openApi } from "./api/openapi";
+import { operations } from "./api/operations";
 
-const app = express();
+/**
+ * Configura o ciclo de vida básico da aplicação, desde a exposição de endpoints até a configuração de middlewares e tratamento de erros.
+ */
+const runAppAsync = async () => {
+	try {
+		const app = express()
 
-app.use(express.json());
-app.use(cors());
+		app.use(express.json())
+		app.use(cors())
 
-app.post("/monitor", async (req, res) => {
-  const { url } = req.body;
+		console.log("Importing API Specification:")
+		console.dir(openApi, { depth: null })
 
-  if (!url) {
-    return res.status(400).json({ error: "A url é obrigatória" });
-  }
+		app.get('/docs', (_req, res) => {
+			res.json(openApi);
+		})
 
-  if (!isValidUrl(url)) {
-    return res.status(400).json({ error: "A url é inválida" });
-  }
+		app.use(schemaParsingMiddleware(openApi))
 
-  const browser = await puppeteer.launch({
-    headless: false,
-    defaultViewport: null,
-  });
+		app.post('/monitor', operations.monitor)
 
-  const page = await browser.newPage();
+		app.use(runtimeErrorMiddleware)
 
-  await page.goto(url);
+		app.listen(
+			3000,
+			() => console.log("Server running on port 3000\nAccess API docs at http://localhost:3000/docs")
+		);
+	}
+	catch (err) {
+		console.error(err);
+	}
+}
 
-  console.log("Página carregada!");
-  console.log("Esperando o usuário clicar em um elemento...");
-
-  const selected = await selectElement(page);
-
-  console.log("Elemento Selecionado...", selected);
-
-  const newValue = await monitorElement(
-    browser,
-    page,
-    selected.selector,
-    selected.text,
-  );
-
-  res.json({
-    message: "Mudança capturada com sucesso!",
-    data: {
-      oldValue: selected.text,
-      newValue: newValue,
-    },
-  });
-
-  browser.close();
-});
-
-app.listen(3000, () => {
-  console.log("Servidor rodando em: http://localhost:3000");
-});
+runAppAsync()
