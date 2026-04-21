@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { errorMiddleware, schemaParsingMiddleware } from "./api/middleware";
+import { runtimeErrorMiddleware, schemaParsingMiddleware } from "./api/middleware";
 import { openApi } from "./api/openapi";
 import { operations } from "./api/operations";
 
@@ -22,7 +22,7 @@ const runAppAsync = async () => {
 		})
 
 		app.use(schemaParsingMiddleware(openApi, operations))
-		app.use(errorMiddleware)
+		app.use(runtimeErrorMiddleware)
 
 		app.listen(
 			3000,
