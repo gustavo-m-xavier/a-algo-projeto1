@@ -4,7 +4,16 @@ import puppeteer from "puppeteer";
 import { selectElementAsync } from "../services/selectElement";
 import { monitorElementAsync } from "../services/monitor";
 
+/**
+ * Define os handlers de operações para os endpoints da API.
+ */
 export const operations: Record<string, RequestHandler> = {
+	/**
+	 * Executa o monitoramento de um elemento em uma página Web até que ocorra uma mudança em seu conteúdo.
+	 * @param req A requisição HTTP contendo a URL da página a ser monitorada no corpo da requisição.
+	 * @param res A resposta HTTP.
+	 * @returns Uma resposta JSON indicando o sucesso do monitoramento e os valores antigo e novo do elemento monitorado.
+	 */
 	monitor: async (req: Request, res: Response) => {
 		const { url } = req.body;
 
