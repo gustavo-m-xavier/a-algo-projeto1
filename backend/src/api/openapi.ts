@@ -1,25 +1,34 @@
-import { errorResponses, errorSchema, jsonSchemas, OpenApi, searchParameters } from "@apexjs-org/openapi";
-import { monitorPaths } from "./paths";
-import * as schemas from './schema'
+import { createDocument } from 'zod-openapi';
+import { monitorPaths } from './paths';
+import { errorSchema, errorResponses, OpenApi } from '@apexjs-org/openapi';
+import { monitorRequest, monitorResponse } from './schema';
 
 /**
- * Definição da especificação OpenAPI para a API de monitoramento de leilões.
- * Utilizada pela aplicação para validar as requisições e gerar a documentação da API.
+ * Gera a especificação OpenAPI para a API de monitoramento utilizando os schemas e paths definidos.
+ * Isto evita a inclusão de defaults que causem icompatibilidades com a validação de requisições, como a inclusão de campos com valores incorretos,
+ * ou a falta de tradução adequada entre esquemas Zod e OpenAPI.
+ */
+const generated = createDocument({
+	openapi: '3.1.1',
+	info: { title: 'Monitor', version: '1.0.1' },
+	components: {
+		schemas: {
+			monitorRequest: monitorRequest,
+			monitorResponse: monitorResponse,
+		}
+	},
+	paths: monitorPaths
+});
+
+/**
+ * Representa a especificação OpenAPI gerada para a API de monitoramento.
  */
 export const openApi: OpenApi = {
 	openapi: '3.1.1',
-	info: {
-		title: 'Monitoramento de Leilões',
-		version: '1.0.1',
-		description: 'API para monitorar mudanças em páginas web de leilões, corretoras etc.',
-	},
-	security: [],
-	paths: monitorPaths,
+	info: generated.info,
+	paths: generated.paths ?? ({} as any),
 	components: {
-		schemas: {
-			Error: errorSchema(),
-			...jsonSchemas(schemas)
-		},
+		schemas: { Error: errorSchema(), ...generated.components?.schemas },
 		responses: errorResponses()
 	}
-}
+};
