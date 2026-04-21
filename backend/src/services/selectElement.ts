@@ -15,6 +15,8 @@ export async function selectElementAsync(page: Page): Promise<SelectedElement> {
 		await page.evaluate(() => {
 			const createdButton = createOverlay();
 
+			console.log("Overlay injetado na página.")
+
 			createdButton.addEventListener(
 				"click",
 				(event) => handleElementSelection(event, createdButton),
@@ -77,34 +79,34 @@ export async function selectElementAsync(page: Page): Promise<SelectedElement> {
 					{ once: true, capture: true },
 				);
 			}
+
+			/**
+			 * Obtém o seletor completo de um elemento, incluindo índices para elementos irmãos do mesmo tipo.
+			 * @param el o elemento HTML para o qual o seletor deve ser gerado.
+			 * @returns uma string representando o caminho completo do seletor CSS para o elemento fornecido.
+			 */
+			function getFullSelector(el: HTMLElement): string {
+				let path = "";
+
+				while (el.parentElement) {
+					let tag = el.tagName.toLowerCase();
+
+					const siblings = Array.from(el.parentElement.children).filter(
+						(child) => child.tagName === el.tagName,
+					);
+
+					if (siblings.length > 1) {
+						const index = siblings.indexOf(el) + 1;
+						tag += `:nth-of-type(${index})`;
+					}
+
+					path = tag + (path ? " > " + path : "");
+					el = el.parentElement;
+				}
+
+				return path;
+			}
 		});
 	});
-}
-
-/**
- * Obtém o seletor completo de um elemento, incluindo índices para elementos irmãos do mesmo tipo.
- * @param el o elemento HTML para o qual o seletor deve ser gerado.
- * @returns uma string representando o caminho completo do seletor CSS para o elemento fornecido.
- */
-function getFullSelector(el: HTMLElement): string {
-	let path = "";
-
-	while (el.parentElement) {
-		let tag = el.tagName.toLowerCase();
-
-		const siblings = Array.from(el.parentElement.children).filter(
-			(child) => child.tagName === el.tagName,
-		);
-
-		if (siblings.length > 1) {
-			const index = siblings.indexOf(el) + 1;
-			tag += `:nth-of-type(${index})`;
-		}
-
-		path = tag + (path ? " > " + path : "");
-		el = el.parentElement;
-	}
-
-	return path;
 }
 
