@@ -6,7 +6,7 @@ import { errorResponseRefs, jsonBody, jsonResponse, Paths, schemaRef } from "@ap
 export const monitorPaths: Paths = {
 	'/monitor': {
 		post: {
-			operationId: 'monitorPage',
+			operationId: 'monitor',
 			summary: 'Monitora uma página web para mudanças em um elemento selecionado',
 			requestBody: jsonBody(schemaRef('monitorRequest')),
 			responses: {
