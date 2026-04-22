@@ -1,4 +1,4 @@
-export type MonitorationResults = {
+export type MonitorationResult = {
 	oldValue: string
 	newValue: string
 	date: string
