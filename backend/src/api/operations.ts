@@ -54,6 +54,7 @@ export const operations: Record<string, RequestHandler> = {
 				oldValue: selected.textContent,
 				newValue: newValue,
 			},
+			date: new Date().toISOString(),
 		});
 
 		browser.close();
