@@ -9,6 +9,6 @@ export const monitorResponse = z.object({
 	data: z.object({
 		oldValue: z.string(),
 		newValue: z.string(),
+		date: z.string(),
 	}),
-	date: z.string(),
 }).meta({ id: 'monitorResponse' })
