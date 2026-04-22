@@ -1,7 +1,7 @@
 import { createDocument } from 'zod-openapi';
 import { monitorPaths } from './paths';
 import { errorSchema, errorResponses, OpenApi } from '@apexjs-org/openapi';
-import { monitorRequest, monitorResponse } from './schema';
+import { trackingRequest, trackingResponse } from './schema';
 
 /**
  * Gera a especificação OpenAPI para a API de monitoramento utilizando os schemas e paths definidos.
@@ -13,8 +13,8 @@ const generated = createDocument({
 	info: { title: 'Monitor', version: '1.0.1' },
 	components: {
 		schemas: {
-			monitorRequest: monitorRequest,
-			monitorResponse: monitorResponse,
+			trackingRequest: trackingRequest,
+			trackingResponse: trackingResponse,
 		}
 	},
 	paths: monitorPaths

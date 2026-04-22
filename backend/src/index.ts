@@ -23,7 +23,7 @@ const runAppAsync = async () => {
 
 		app.use(schemaParsingMiddleware(openApi))
 
-		app.post('/monitor', operations.monitor)
+		app.post('/monitor', operations.trackPage)
 
 		app.use(runtimeErrorMiddleware)
 
