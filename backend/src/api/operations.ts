@@ -14,7 +14,7 @@ export const operations: Record<string, RequestHandler> = {
 	 * @param res A resposta HTTP.
 	 * @returns Uma resposta JSON indicando o sucesso do monitoramento e os valores antigo e novo do elemento monitorado.
 	 */
-	monitor: async (req: Request, res: Response) => {
+	trackPage: async (req: Request, res: Response) => {
 		const { url } = req.body;
 
 		if (!url) {
