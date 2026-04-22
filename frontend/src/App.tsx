@@ -1,13 +1,13 @@
 import { useState, type SubmitEvent } from "react";
-import type { MonitorationResult } from "./types/MonitorationResults";
+import type { TrackingResult } from "./types/TrackingResult";
 
 function App() {
 	const [url, setUrl] = useState("");
 	const [message, setMessage] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [monitorationResults, setMonitorationResults] = useState<MonitorationResult[]>([]);
+	const [trackingResults, setTrackingResults] = useState<TrackingResult[]>([]);
 
-	console.log(monitorationResults)
+	console.log(trackingResults)
 
 	const handleSubmitAsync = async (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -43,7 +43,7 @@ function App() {
 			}
 
 			setMessage(data.message);
-			setMonitorationResults((prev) => [...prev, data.data]);
+			setTrackingResults((prev) => [...prev, data.data]);
 			setUrl("");
 		} catch (err: unknown) {
 			if (err instanceof Error) {
@@ -84,12 +84,12 @@ function App() {
 				)}
 			</section>
 
-			<RenderIf condition={monitorationResults.length > 0}>
+			<RenderIf condition={trackingResults.length > 0}>
 				<section key={"monitorationResults"} style={{ marginTop: "30px" }}>
 					<h2>Resultados</h2>
 
 					<ul style={styles.list}>
-						{monitorationResults.map((result, index) => {
+						{trackingResults.map((result, index) => {
 							return (
 								<li key={index}>
 									<article style={styles.resultCard}>
