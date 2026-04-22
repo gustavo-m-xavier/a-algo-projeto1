@@ -3,6 +3,7 @@ import { isValidUrl } from "../utils/urlValidator";
 import puppeteer from "puppeteer";
 import { selectElementAsync } from "../services/element-selection";
 import { monitorElementAsync } from "../services/monitor";
+import { emitLog } from "../services/log-emitter";
 
 /**
  * Define os handlers de operações para os endpoints da API.
@@ -30,16 +31,19 @@ export const operations: Record<string, RequestHandler> = {
 			defaultViewport: null,
 		});
 
-		const page = await browser.newPage();
+		const [page] = await browser.pages();
+
+		await page.setBypassCSP(true);
 
 		await page.goto(url);
 
-		console.log("Página carregada!");
-		console.log("Esperando o usuário clicar em um elemento...");
+		emitLog("Página carregada!");
+		emitLog("Esperando o usuário selecionar um elemento na janela do browser...");
 
 		const selected = await selectElementAsync(page);
 
-		console.log("Elemento Selecionado...", selected);
+		emitLog(`Elemento selecionado: ${selected.selector}`);
+		emitLog(`Conteúdo inicial: "${selected.textContent}"`);
 
 		const newValue = await monitorElementAsync(
 			browser,
