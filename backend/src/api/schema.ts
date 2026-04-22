@@ -10,5 +10,6 @@ export const monitorResponse = z.object({
 		oldValue: z.string(),
 		newValue: z.string(),
 		date: z.string(),
+		url: z.url()
 	}),
 }).meta({ id: 'monitorResponse' })
