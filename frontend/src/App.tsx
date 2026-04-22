@@ -1,193 +1,230 @@
-import { useState } from "react";
-import type { MonitorationResults } from "./types/MonitorationResults";
+import { useState, type SubmitEvent } from "react";
+import type { MonitorationResult } from "./types/MonitorationResults";
 
 function App() {
-  const [url, setUrl] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [monitorationResults, setMonitorationResults] = useState<
-    MonitorationResults[]
-  >([]);
+	const [url, setUrl] = useState("");
+	const [message, setMessage] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [monitorationResults, setMonitorationResults] = useState<MonitorationResult[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+	console.log(monitorationResults)
 
-    if (!url) {
-      setMessage("Por favor, insira uma URL");
-      return;
-    }
+	const handleSubmitAsync = async (event: SubmitEvent<HTMLFormElement>) => {
+		event.preventDefault();
 
-    if (!url.startsWith("http")) {
-      setMessage("URL inválida");
-      return;
-    }
+		if (!url) {
+			setMessage("Por favor, insira uma URL");
 
-    setLoading(true);
-    setMessage("Enviando...");
+			return;
+		}
 
-    try {
-      const response = await fetch("http://localhost:3000/monitor", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url }),
-      });
+		if (!url.startsWith("http")) {
+			setMessage("URL inválida");
 
-      const data = await response.json();
+			return;
+		}
 
-      if (!response.ok) {
-        throw new Error(data.error || "Erro");
-      }
+		setLoading(true);
+		setMessage("Enviando...");
 
-      setMessage(data.message);
-      setMonitorationResults((prev) => [...prev, data.data]);
-      setUrl("");
-    } catch (err: any) {
-      setMessage(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+		try {
+			const response = await fetch("http://localhost:3000/monitor", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ url }),
+			});
 
-  return (
-    <main style={styles.page}>
-      <section style={styles.card} key={"monitoration-form"}>
-        <h1 style={styles.title}>Monitorar Página</h1>
+			const data = await response.json();
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <fieldset style={styles.fieldSet}>
-            <label htmlFor="url">URL da Página</label>
-            <input
-              type="text"
-              name="url"
-              placeholder="https://exemplo.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              style={styles.input}
-            />
-          </fieldset>
+			if (!response.ok) {
+				throw new Error(data.error || "Erro");
+			}
 
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Carregando..." : "Monitorar"}
-          </button>
-        </form>
+			setMessage(data.message);
+			setMonitorationResults((prev) => [...prev, data.data]);
+			setUrl("");
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				setMessage(err.message);
+			} else {
+				setMessage("Erro desconhecido");
+			}
+		} finally {
+			setLoading(false);
+		}
+	};
 
-        {setTimeout(() => setMessage(""), 5000) && message && (
-          <p style={styles.message}>{message}</p>
-        )}
-      </section>
+	return (
+		<main style={styles.page}>
+			<section style={styles.card} key={"monitoration-form"}>
+				<h1 style={styles.title}>Monitorar Página</h1>
 
-      {monitorationResults.length > 0 && (
-        <section key={"monitorationResults"} style={{ marginTop: "30px" }}>
-          <h2>Resultados das tentativas de Monitoramento</h2>
-          <ul style={styles.list}>
-            {monitorationResults.map((result, index) => {
-              return (
-                <li style={styles.resultCard} key={index}>
-                  <h3>Resultado da tentativa {index + 1}</h3>
-                  <p>
-                    <strong>Valor Antigo:</strong> {result.oldValue}
-                  </p>
-                  <p>
-                    <strong>Valor Novo:</strong> {result.newValue}
-                  </p>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-    </main>
-  );
+				<form onSubmit={handleSubmitAsync} style={styles.form}>
+					<fieldset style={styles.fieldSet}>
+						<label htmlFor="url">URL da Página</label>
+						<input
+							type="text"
+							name="url"
+							placeholder="https://exemplo.com"
+							value={url}
+							onChange={(e) => setUrl(e.target.value)}
+							style={styles.input}
+						/>
+					</fieldset>
+
+					<button type="submit" style={styles.button} disabled={loading}>
+						{loading ? "Carregando..." : "Monitorar"}
+					</button>
+				</form>
+
+				{setTimeout(() => setMessage(""), 5000) && message && (
+					<p style={styles.message}>{message}</p>
+				)}
+			</section>
+
+			<RenderIf condition={monitorationResults.length > 0}>
+				<section key={"monitorationResults"} style={{ marginTop: "30px" }}>
+					<h2>Resultados</h2>
+
+					<ul style={styles.list}>
+						{monitorationResults.map((result, index) => {
+							return (
+								<li key={index}>
+									<article style={styles.resultCard}>
+										<h3>Tenativa {index + 1}</h3>
+										<p>
+											<strong>Valor Antigo:</strong> {result.oldValue}
+										</p>
+										<p>
+											<strong>Valor Novo:</strong> {result.newValue}
+										</p>
+
+										<p style={styles.date}>
+											<strong>Data:</strong>{" "}
+											{new Date(result.date).toLocaleString("pt-br")}
+										</p>
+
+										<p >
+											<strong>URL:</strong> <a href={result.url} target="_blank" rel="noopener noreferrer">
+												{result.url.substring(0, 24)}...
+											</a>
+										</p>
+									</article>
+								</li>
+							);
+						})}
+					</ul>
+				</section>
+			</RenderIf>
+		</main>
+	);
 }
 
-const styles = {
-  page: {
-    flex: 1,
-    height: "100vh",
-    backgroundColor: "#ffffff",
-    display: "flex",
-    flexDirection: "column" as const,
-    justifyContent: "center",
-    alignItems: "center",
-    fontFamily: "Arial, sans-serif",
-  },
+function RenderIf({ condition, children }: { condition: boolean; children: React.ReactNode }) {
+	return condition ? children : null;
+}
 
-  card: {
-    backgroundColor: "#f9f9f9",
-    padding: "30px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    width: "400px",
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "20px",
-  },
+const styles: Record<string, React.CSSProperties> = {
+	page: {
+		flex: 1,
+		minHeight: "100dvh",
+		backgroundColor: "#ffffff",
+		display: "flex",
+		flexDirection: "column",
+		justifyContent: "center",
+		alignItems: "center",
+		fontFamily: "Arial, sans-serif",
+	},
 
-  resultCard: {
-    backgroundColor: "#f9f9f9",
-    padding: "30px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    width: "300px",
-    display: "flex",
-    flexDirection: "column" as const,
-  },
+	card: {
+		backgroundColor: "#f9f9f9",
+		padding: "30px",
+		borderRadius: "12px",
+		boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+		width: "400px",
+		display: "flex",
+		flexDirection: "column",
+		gap: "12px",
+		border: "1px solid #e0e0e0",
+	},
 
-  title: {
-    margin: 0,
-    textAlign: "center" as const,
-  },
+	resultCard: {
+		backgroundColor: "#f9f9f9",
+		padding: "30px",
+		borderRadius: "12px",
+		boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+		width: "300px",
+		display: "flex",
+		flexDirection: "column",
+		border: "1px solid #e0e0e0",
+	},
 
-  form: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "15px",
-  },
+	title: {
+		margin: 0,
+		textAlign: "center",
+	},
 
-  fieldSet: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "5px",
-    border: "none",
-    padding: 0,
-  },
+	form: {
+		display: "flex",
+		flexDirection: "column",
+		gap: "15px",
+	},
 
-  input: {
-    padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
-  },
+	fieldSet: {
+		display: "flex",
+		flexDirection: "column",
+		gap: "5px",
+		border: "none",
+		padding: 0,
+	},
 
-  button: {
-    padding: "12px",
-    cursor: "pointer",
-    borderRadius: "6px",
-    border: "none",
-    backgroundColor: "#007BFF",
-    color: "#fff",
-    fontWeight: "bold" as const,
-    transition: "0.2s",
-  },
+	input: {
+		padding: "10px",
+		borderRadius: "6px",
+		border: "1px solid #ccc",
+		fontSize: "14px",
+	},
 
-  list: {
-    listStyle: "none",
-    padding: 0,
-    display: "flex",
-    flexDirection: "row" as const,
-    gap: "15px",
-  },
+	button: {
+		padding: "12px",
+		cursor: "pointer",
+		borderRadius: "6px",
+		border: "none",
+		backgroundColor: "#007BFF",
+		color: "#fff",
+		fontWeight: "bold",
+		transition: "0.2s",
+	},
 
-  message: {
-    textAlign: "center" as const,
-    fontSize: "14px",
-    border: "1px solid #ccc",
-    padding: "10px",
-    borderRadius: "6px",
-    backgroundColor: "#f0f0f0",
-  },
+	list: {
+		listStyle: "none",
+		padding: 0,
+		display: "flex",
+		flexDirection: "row",
+		flexWrap: "wrap",
+		gap: "24px",
+	},
+
+	message: {
+		textAlign: "center",
+		fontSize: "14px",
+		border: "1px solid #ccc",
+		padding: "10px",
+		borderRadius: "6px",
+		backgroundColor: "#f0f0f0",
+	},
+
+	date: {
+		fontSize: "12px",
+		color: "#666",
+		border: "1px solid #ccc",
+		padding: "10px",
+		borderRadius: "6px",
+		backgroundColor: "#f0f0f0",
+		width: "fit-content"
+	}
 };
 
 export default App;
