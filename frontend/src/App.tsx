@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import type { TrackingResult } from "./types/TrackingResult";
 
 function App() {
+	const [username, setUsername] = useState<string | null>(null);
+	const [nameInput, setNameInput] = useState("");
+	const [nameError, setNameError] = useState<string | null>(null);
+
 	const [url, setUrl] = useState("");
 	const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -19,6 +23,19 @@ function App() {
 		const timer = setTimeout(() => setMessage(null), 5000);
 		return () => clearTimeout(timer);
 	}, [message]);
+
+	const handleNameSubmit = (event: { preventDefault(): void }) => {
+		event.preventDefault();
+		const trimmed = nameInput.trim();
+		const onlyLetters = /^[A-Za-zÀ-ÿ\s]+$/.test(trimmed);
+		const enoughLetters = trimmed.replace(/\s+/g, "").length >= 3;
+		if (!onlyLetters || !enoughLetters) {
+			setNameError("Nome inválido — use ao menos 3 letras, sem números ou símbolos");
+			return;
+		}
+		setNameError(null);
+		setUsername(trimmed);
+	};
 
 	const handleSubmit = async (event: { preventDefault(): void }) => {
 		event.preventDefault();
@@ -53,7 +70,7 @@ function App() {
 			const response = await fetch("http://localhost:3000/monitor", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ url }),
+				body: JSON.stringify({ url, username }),
 			});
 
 			const data = await response.json();
@@ -74,6 +91,39 @@ function App() {
 			eventSourceRef.current = null;
 		}
 	};
+
+	if (username === null) {
+		return (
+			<main style={s.page}>
+				<div style={{ ...s.wrapper, maxWidth: "420px" }}>
+					<header style={s.header}>
+						<span style={s.logo}>&#9646;</span>
+						<h1 style={s.title}>Monitoramento de Páginas</h1>
+					</header>
+					<section style={s.card}>
+						<form onSubmit={handleNameSubmit} style={s.form}>
+							<label style={s.label} htmlFor="name">Seu nome</label>
+							<div style={s.inputRow}>
+								<input
+									id="name"
+									type="text"
+									placeholder="Ex: João Silva"
+									value={nameInput}
+									onChange={(e) => setNameInput(e.target.value)}
+									style={s.input}
+									autoFocus
+								/>
+								<button type="submit" style={s.button}>Entrar</button>
+							</div>
+						</form>
+						{nameError && (
+							<div style={{ ...s.toast, ...s.toastErr }}>{nameError}</div>
+						)}
+					</section>
+				</div>
+			</main>
+		);
+	}
 
 	return (
 		<main style={s.page}>

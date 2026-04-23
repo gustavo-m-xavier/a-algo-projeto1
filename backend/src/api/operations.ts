@@ -16,7 +16,7 @@ export const operations: Record<string, RequestHandler> = {
 	 * @returns Uma resposta JSON indicando o sucesso do monitoramento e os valores antigo e novo do elemento monitorado.
 	 */
 	trackPage: async (req: Request, res: Response) => {
-		const { url } = req.body;
+		const { url, username } = req.body;
 
 		if (!url) {
 			return res.status(400).json({ error: "A url é obrigatória" });
@@ -37,19 +37,20 @@ export const operations: Record<string, RequestHandler> = {
 
 		await page.goto(url);
 
-		emitLog("Página carregada!");
-		emitLog("Esperando o usuário selecionar um elemento na janela do browser...");
+		emitLog(`[${username}] Página carregada!`);
+		emitLog(`[${username}] Esperando o usuário selecionar um elemento na janela do browser...`);
 
 		const selected = await selectElementAsync(page);
 
-		emitLog(`Elemento selecionado: ${selected.selector}`);
-		emitLog(`Conteúdo inicial: "${selected.textContent}"`);
+		emitLog(`[${username}] Elemento selecionado: ${selected.selector}`);
+		emitLog(`[${username}] Conteúdo inicial: "${selected.textContent}"`);
 
 		const newValue = await monitorElementAsync(
 			browser,
 			page,
 			selected.selector,
 			selected.textContent,
+			username,
 		);
 
 		res.json({

@@ -5,6 +5,7 @@ import z from "zod";
  */
 export const trackingRequest = z.object({
 	url: z.url().nonempty("A url é obrigatória"),
+	username: z.string().min(3, "O nome deve ter ao menos 3 caracteres"),
 }).meta({ id: 'trackingRequest' })
 
 /**
