@@ -70,7 +70,7 @@ npm install
 npm run dev
 ```
 
-Se tudo tiver ocorrido bem, aparecerá a seguinte mensagem:
+Caso tudo esteja correto, aparecerá a seguinte mensagem:
 
 ```bash
 > frontend@0.0.0 dev
