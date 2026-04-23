@@ -62,27 +62,28 @@ export async function monitorElementAsync(
 	page: Page,
 	selector: string,
 	initialValue: string,
+	username: string,
 ) {
 	let oldValue = initialValue;
 
-	emitLog("Iniciando monitoramento do elemento...");
-	emitLog(`Valor Inicial: "${oldValue}"`);
+	emitLog(`[${username}] Iniciando monitoramento do elemento...`);
+	emitLog(`[${username}] Valor Inicial: "${oldValue}"`);
 
 	while (true) {
 		try {
 			const currentValue = await readValue(page, selector, oldValue.length);
 
-			emitLog("Checando elemento...");
+			emitLog(`[${username}] Checando elemento...`);
 
 			if (currentValue !== oldValue) {
-				emitLog("Possível mudança detectada, aguardando estabilização...");
+				emitLog(`[${username}] Possível mudança detectada, aguardando estabilização...`);
 
 				const stableValue = await readStableValue(page, selector, oldValue.length);
 
 				if (stableValue !== oldValue) {
-					emitLog("Mudança confirmada!");
-					emitLog(`Antigo: "${oldValue}"`);
-					emitLog(`Novo: "${stableValue}"`);
+					emitLog(`[${username}] Mudança confirmada!`);
+					emitLog(`[${username}] Antigo: "${oldValue}"`);
+					emitLog(`[${username}] Novo: "${stableValue}"`);
 
 					await submitTrackingAsync(browser, oldValue, stableValue);
 
@@ -90,7 +91,7 @@ export async function monitorElementAsync(
 				}
 			}
 		} catch (err) {
-			emitLog(`Elemento não encontrado. Verifique o seletor: ${selector}`);
+			emitLog(`[${username}] Elemento não encontrado. Verifique o seletor: ${selector}`);
 		}
 
 		await new Promise((r) => setTimeout(r, 3000));
